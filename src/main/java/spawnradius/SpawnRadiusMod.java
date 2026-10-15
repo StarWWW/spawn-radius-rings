@@ -10,6 +10,7 @@ import net.minecraft.resources.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import spawnradius.client.SpawnRadiusScreen;
+import spawnradius.client.WorldMapHook;
 import spawnradius.compat.Compat;
 
 public class SpawnRadiusMod implements ClientModInitializer {
@@ -27,6 +28,7 @@ public class SpawnRadiusMod implements ClientModInitializer {
         SpawnRadiusConfig.get();
         KeyMappingHelper.registerKeyMapping(TOGGLE_KEY);
         KeyMappingHelper.registerKeyMapping(SETTINGS_KEY);
+        WorldMapHook.register();
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             while (TOGGLE_KEY.consumeClick()) {
                 toggle();

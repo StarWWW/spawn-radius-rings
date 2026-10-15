@@ -4,7 +4,7 @@
   "package": "spawnradius.mixin",
   "compatibilityLevel": "JAVA_17",
   "client": [
-    "MixinGuiMap",
+    "MixinImprovedFramebuffer",
     "GuiGraphicsExtractorAccessor"
   ],
   "injectors": {

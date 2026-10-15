@@ -52,6 +52,10 @@ Bağımlılıklar şuralardan indirilir:
 
 Bu üç mod sadece derleme için kullanılır (`compileOnly`), jar'ın içine girmez.
 
+### Xaero'nun harita ekranına neden mixin yok
+
+Xaero'nun harita ekranı `GuiMap`'in çizim metodu çok büyüktür (~4700 komut, 180 yerel değişken). Bir sınıfa mixin uygulanınca Mixin bütün sınıfı yeniden yazar ve her metodun stack frame'lerini baştan hesaplar. Fabric Loader 0.20 ile gelen ASM 9.11 bu hesaba metot başına 100 milyon işlem sınırı koydu; `GuiMap` tek başına ~87 milyon işlem tutuyor, mixin kodu eklenince sınır aşılıyor ve oyun açılırken `LimitExceededException: Too many operations` ile çöküyor. Bu yüzden mod `GuiMap`'e hiç dokunmaz: butonlar ve tuşlar Fabric'in ekran olaylarıyla eklenir, harita konumu reflection ile okunur, halkalar da Xaero'nun her karede harita resmini çizdikten hemen sonra çağırdığı küçük `ImprovedFramebuffer.bindDefaultFramebuffer` metoduna eklenen mixin ile çizilir (çizim sırası eskisiyle aynı: haritanın üstünde, Xaero'nun yazılarının altında). Geliştirme ortamı bu tür sorunları erken yakalamak için Fabric Loader 0.20.0 ile çalışır; mod yine de 0.19+ ile çalışır.
+
 ## Proje yapısı
 
 ```
@@ -66,7 +70,8 @@ src/main/java/spawnradius/
   client/SpawnRadiusScreen     ayarlar ekranı (kaydırılabilir liste; Varsayılanlar onay sorar)
   client/ui/                   ayar ekranı iskeleti; üç modda aynıdır, ekranlar aynı görünür
   client/XaeroIconButton       Xaero'nun buton sınıfıyla çizilen harita butonları
-  mixin/MixinGuiMap            Xaero'nun dünya haritasına çizim ve buton ekler
+  client/WorldMapHook          Xaero'nun dünya haritasına halkaları, butonları ve tuşları ekler (Fabric ekran olaylarıyla)
+  mixin/MixinImprovedFramebuffer  harita resmi çizildikten hemen sonra halkaları çizdirir
   mixin/GuiGraphicsExtractorAccessor
   compat/ModMenuIntegration
 src/mc26.1/java, src/mc26.2/java   Minecraft sürümüne göre değişen birkaç çağrı (Compat)
