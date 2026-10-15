@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "id": "spawnradius",
+  "version": "${version}",
+  "name": "Spawn Radius Rings",
+  "description": "Shows mob spawn and despawn distance rings, spawning chunks and the world spawn no-spawn zone on Xaero's World Map.",
+  "license": "MIT",
+  "authors": ["StarWWW"],
+  "contact": {
+    "homepage": "https://github.com/StarWWW/spawn-radius-rings",
+    "sources": "https://github.com/StarWWW/spawn-radius-rings",
+    "issues": "https://github.com/StarWWW/spawn-radius-rings/issues"
+  },
+  "icon": "assets/spawnradius/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "spawnradius.SpawnRadiusMod"
+    ],
+    "modmenu": [
+      "spawnradius.compat.ModMenuIntegration"
+    ]
+  },
+  "mixins": [
+    "spawnradius.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.19.0",
+    "minecraft": "~26.1",
+    "java": ">=25",
+    "fabric-api": ">=${fabric_api_version}",
+    "xaeroworldmap": ">=${worldmap_version}",
+    "xaerolib": ">=${xaerolib_version}"
+  },
+  "suggests": {
+    "modmenu": "*"
+  }
+}

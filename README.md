@@ -1,0 +1,79 @@
+# Spawn Radius Rings
+
+Xaero's World Map üzerinde, oyuncunun etrafındaki mob spawn ve despawn mesafelerini halka olarak gösteren bir Fabric modu.
+
+*English: A Fabric mod for Minecraft 26.1.2 that draws mob spawn/despawn distance rings, spawning chunks and the world-spawn no-spawn zone on Xaero's World Map.*
+
+## Özellikler
+
+- **Halkalar:** 24 blok (spawn olmaz), 32 blok (rastgele despawn başlar), 64 blok (balıklar anında despawn) ve 128 blok (diğer mob'lar anında despawn). Mesafeler oyunun kendi değerlerinden (`MobCategory`) okunur.
+- **Y kesiti:** Mesafeler küreseldir. Sabit bir Y seviyesi seçilirse halkalar o yükseklikte gerçekten geçerli olan yarıçapla çizilir.
+- **Sabit merkez:** AFK noktası planlamak için merkez bir konuma sabitlenebilir.
+- **Spawn chunk'ları:** Sunucunun mob spawn'ı çalıştırdığı chunk'lar gösterilir. Bunun için chunk merkezinin yatayda 128 bloktan yakın olması ve chunk'ın simülasyon mesafesi içinde kalması gerekir.
+- **Dünya spawn alanı:** Dünya spawn noktasının 24 blok çevresi.
+- Xaero tarzı harita butonları, bilgi paneli, etiketler, renk seçimi. Bilgi paneli Xaero'nun sol buton sütununu kapatmaz; halka etiketleri birbirinin ve panelin üstüne binmez (sığmayan etiket gösterilmez).
+- Mod Menu desteği ve 19 dil.
+
+## Gereksinimler
+
+- Minecraft 26.1.2, Fabric Loader 0.19+, Java 25
+- Fabric API 0.155.3+
+- Xaero's World Map 1.47.0+
+- Xaero Lib 1.7.3+ (Xaero's World Map'in içinde gelir, ayrıca kurmana gerek yok)
+- İsteğe bağlı: Mod Menu
+
+Bunların hepsi `fabric.mod.json` içinde bağımlılık olarak yazılıdır. Biri eksikse veya sürümü eskiyse oyun açılırken Fabric bunu adıyla söyler. Bağımlılık sürümleri derleme sırasında `gradle.properties` dosyasından alınır, yani modun derlendiği sürümlerle hep aynıdır.
+
+## Derleme
+
+Java 25 gerekir. Prism Launcher'ın indirdiği Java 25'i de kullanabilirsin:
+
+```
+set JAVA_HOME=%APPDATA%\PrismLauncher\java\java-runtime-epsilon
+gradlew build
+```
+
+Hazır jar `build/libs/` klasörüne çıkar (`-sources` olmayan dosya). `gradlew build` ayrıca `src/test` altındaki JUnit testlerini de çalıştırır.
+
+Bağımlılıklar şuralardan indirilir:
+- Minecraft, Fabric Loader ve Fabric API: Fabric Maven
+- Xaero's World Map ve Mod Menu: Modrinth Maven
+- Xaero Lib: `maven.2b2t.vc/xaero` (XaeroPlus'ın da kullandığı depo)
+
+Bu üç mod sadece derleme için kullanılır (`compileOnly`), jar'ın içine girmez.
+
+## Proje yapısı
+
+```
+src/main/java/spawnradius/
+  SpawnRadiusMod.java          giriş noktası, tuş atamaları, aç/kapat
+  SpawnRadiusConfig.java       ayarlar (config/spawnradius.properties)
+  SpawnRing.java               halkalar; mesafeler MobCategory'den okunur
+  client/MapOverlayRenderer    harita koordinatları ve halka çizimi
+  client/RingBatch             tüm şekilleri tek GUI öğesi olarak çizer (performans)
+  client/SpawnChunkOverlay     spawn chunk gölgelendirmesi
+  client/Legend                sol üstteki bilgi paneli
+  client/SpawnRadiusScreen     ayarlar ekranı (kaydırılabilir liste; Varsayılanlar onay sorar)
+  client/ui/                   ayar ekranı iskeleti; üç modda aynıdır, ekranlar aynı görünür
+  client/XaeroIconButton       Xaero'nun buton sınıfıyla çizilen harita butonları
+  mixin/MixinGuiMap            Xaero'nun dünya haritasına çizim ve buton ekler
+  mixin/GuiGraphicsExtractorAccessor
+  compat/ModMenuIntegration
+src/main/resources/            fabric.mod.json, mixin ayarı, dil dosyaları, ikonlar
+src/test/java/spawnradius/     JUnit testleri (halka mesafeleri, harita hesapları, ayarlar, dil dosyaları)
+tools/MakeAssets.java          buton ikonlarını ve logoyu üretir: java tools/MakeAssets.java
+tools/make_lang.py             dil dosyalarını üretir ve İngilizce'ye göre kontrol eder
+```
+
+Bir yazıyı değiştirmek veya dil eklemek için `tools/lang_*.py` dosyalarını düzenle, sonra `python3 tools/make_lang.py` çalıştır.
+
+## Oyun koduna göre doğrulananlar (26.1.2)
+
+- `NaturalSpawner`: oyuncuya uzaklığın karesi ≤ 576 (24²) olan yerlerde spawn olmaz. Dünya spawn noktasına 24 bloktan yakın yerlerde de olmaz.
+- `MobCategory`: anında despawn mesafesi 128, balıklar için 64. Rastgele despawn mesafesi 32.
+- `Mob.checkDespawn`: rastgele despawn için `noActionTime > 600` ve 1/800 ihtimal.
+- `ChunkMap`: chunk merkezi yatayda 128 bloktan (16384 = 128²) yakın olmalı. Ayrıca chunk, simülasyon mesafesi içinde entity-ticking olmalı.
+
+## Lisans
+
+MIT, `LICENSE` dosyasına bak. Xaero's World Map ayrı bir mod ve kendi lisansına tabi. Bu proje Xaero'nun dosyalarını içermez.

@@ -1,0 +1,81 @@
+plugins {
+	id 'net.fabricmc.fabric-loom' version "${loom_version}"
+}
+
+repositories {
+	// Xaero's World Map and Mod Menu, from Modrinth's Maven
+	exclusiveContent {
+		forRepository {
+			maven {
+				name = 'Modrinth'
+				url = 'https://api.modrinth.com/maven'
+			}
+		}
+		filter {
+			includeGroup 'maven.modrinth'
+		}
+	}
+	// Xaero Lib (bundled inside the World Map jar). Same repository XaeroPlus builds against.
+	maven {
+		name = 'Xaero Lib'
+		url = 'https://maven.2b2t.vc/xaero'
+		content {
+			includeGroup 'xaero.lib'
+		}
+	}
+	mavenCentral()
+}
+
+dependencies {
+	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+	implementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+
+	// Only needed to compile; players install these mods themselves.
+	compileOnly "maven.modrinth:xaeros-world-map:fabric-${project.minecraft_version}-${project.worldmap_version}"
+	compileOnly "xaero.lib:xaerolib-fabric-${project.minecraft_version}:${project.xaerolib_version}"
+	compileOnly "maven.modrinth:modmenu:${project.modmenu_version}"
+
+	testImplementation platform("org.junit:junit-bom:${project.junit_version}")
+	testImplementation "org.junit.jupiter:junit-jupiter"
+	testRuntimeOnly "org.junit.platform:junit-platform-launcher"
+}
+
+test {
+	useJUnitPlatform()
+}
+
+processResources {
+	// the dependency versions in fabric.mod.json are the ones this mod is compiled against
+	def props = [
+		"version": project.version,
+		"fabric_api_version": project.fabric_api_version,
+		"worldmap_version": project.worldmap_version,
+		"xaerolib_version": project.xaerolib_version
+	]
+	inputs.properties props
+
+	filesMatching("fabric.mod.json") {
+		expand props
+	}
+}
+
+tasks.withType(JavaCompile).configureEach {
+	it.options.release = 25
+	it.options.encoding = 'UTF-8'
+}
+
+java {
+	withSourcesJar()
+	sourceCompatibility = JavaVersion.VERSION_25
+	targetCompatibility = JavaVersion.VERSION_25
+}
+
+jar {
+	def projectName = project.name
+	inputs.property "projectName", projectName
+
+	from("LICENSE") {
+		rename { "${it}_$projectName" }
+	}
+}
