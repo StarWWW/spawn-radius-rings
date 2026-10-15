@@ -11,6 +11,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import org.jspecify.annotations.Nullable;
+import spawnradius.compat.Compat;
 
 import java.util.List;
 
@@ -125,13 +126,13 @@ public abstract class SettingsScreen extends Screen {
     }
 
     private void confirmReset() {
-        this.minecraft.setScreen(new ConfirmScreen(yes -> {
+        Compat.setScreen(this.minecraft, new ConfirmScreen(yes -> {
             if (yes) {
                 reset();
                 save();
                 if (list != null) list.rebuild();
             }
-            this.minecraft.setScreen(this);
+            Compat.setScreen(this.minecraft, this);
         }, resetQuestion(), resetWarning()));
     }
 
@@ -143,6 +144,6 @@ public abstract class SettingsScreen extends Screen {
     @Override
     public void onClose() {
         afterClose();
-        this.minecraft.setScreen(parent);
+        Compat.setScreen(this.minecraft, parent);
     }
 }

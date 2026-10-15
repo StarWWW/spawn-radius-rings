@@ -20,6 +20,7 @@ import spawnradius.SpawnRadiusMod;
 import spawnradius.client.MapOverlayRenderer;
 import spawnradius.client.SpawnRadiusScreen;
 import spawnradius.client.XaeroIconButton;
+import spawnradius.compat.Compat;
 import xaero.lib.client.gui.ScreenBase;
 import xaero.map.MapProcessor;
 import xaero.map.gui.GuiMap;
@@ -75,7 +76,7 @@ public abstract class MixinGuiMap extends ScreenBase {
                 SpawnRadiusMod.TOGGLE_KEY)));
         addRenderableWidget(new XaeroIconButton(x, y - 20, XaeroIconButton.SETTINGS, XaeroIconButton.SETTINGS,
             () -> true,
-            b -> this.minecraft.setScreen(new SpawnRadiusScreen((Screen) (Object) this)),
+            b -> Compat.setScreen(this.minecraft, new SpawnRadiusScreen((Screen) (Object) this)),
             () -> XaeroIconButton.tooltip(Component.translatable("spawnradius.button.settings.tooltip"),
                 SpawnRadiusMod.SETTINGS_KEY)));
     }
@@ -86,7 +87,7 @@ public abstract class MixinGuiMap extends ScreenBase {
             SpawnRadiusMod.toggle();
             cir.setReturnValue(true);
         } else if (SpawnRadiusMod.SETTINGS_KEY.matches(event)) {
-            this.minecraft.setScreen(new SpawnRadiusScreen((Screen) (Object) this));
+            Compat.setScreen(this.minecraft, new SpawnRadiusScreen((Screen) (Object) this));
             cir.setReturnValue(true);
         }
     }

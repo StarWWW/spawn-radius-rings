@@ -10,6 +10,7 @@ import net.minecraft.resources.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import spawnradius.client.SpawnRadiusScreen;
+import spawnradius.compat.Compat;
 
 public class SpawnRadiusMod implements ClientModInitializer {
     public static final String MOD_ID = "spawnradius";
@@ -31,7 +32,7 @@ public class SpawnRadiusMod implements ClientModInitializer {
                 toggle();
             }
             while (SETTINGS_KEY.consumeClick()) {
-                client.setScreen(new SpawnRadiusScreen(client.screen));
+                Compat.setScreen(client, new SpawnRadiusScreen(Compat.screen(client)));
             }
         });
     }
