@@ -1,5 +1,6 @@
 package spawnradius;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
@@ -19,9 +20,11 @@ public class SpawnRadiusMod implements ClientModInitializer {
 
     public static final KeyMapping.Category KEY_CATEGORY =
         KeyMapping.Category.register(Identifier.fromNamespaceAndPath(MOD_ID, "keybindings"));
-    /** Unbound by default (-1) so it never clashes with another mod; set it in Controls. */
-    public static final KeyMapping TOGGLE_KEY = new KeyMapping("key.spawnradius.toggle", -1, KEY_CATEGORY);
-    public static final KeyMapping SETTINGS_KEY = new KeyMapping("key.spawnradius.settings", -1, KEY_CATEGORY);
+    // InputConstants.UNKNOWN is the game's "no key": -1 up to 26.2, 0 from 26.3 (SDL input). A hard-coded -1
+    // counts as a real key in 26.3 and crashes the game when it reads the keyboard state.
+    /** Unbound by default so it never clashes with another mod; set it in Controls. */
+    public static final KeyMapping TOGGLE_KEY = new KeyMapping("key.spawnradius.toggle", InputConstants.UNKNOWN.getValue(), KEY_CATEGORY);
+    public static final KeyMapping SETTINGS_KEY = new KeyMapping("key.spawnradius.settings", InputConstants.UNKNOWN.getValue(), KEY_CATEGORY);
 
     @Override
     public void onInitializeClient() {

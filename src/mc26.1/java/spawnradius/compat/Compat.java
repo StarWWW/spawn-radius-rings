@@ -6,7 +6,7 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * The few game calls that differ between the Minecraft versions this mod is built for.
- * This copy is for 26.1; src/mc26.2 has the same class for 26.2. Everything else is shared.
+ * This copy is for 26.1; src/mc26.2 and src/mc26.3 have the same class for those versions. Everything else is shared.
  */
 public final class Compat {
     private Compat() {

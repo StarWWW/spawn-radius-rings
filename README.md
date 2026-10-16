@@ -2,7 +2,7 @@
 
 Xaero's World Map üzerinde, oyuncunun etrafındaki mob spawn ve despawn mesafelerini halka olarak gösteren bir Fabric modu.
 
-*English: A Fabric mod for Minecraft 26.1.2 and 26.2 that draws mob spawn/despawn distance rings, spawning chunks and the world-spawn no-spawn zone on Xaero's World Map.*
+*English: A Fabric mod for Minecraft 26.1.2, 26.2 and 26.3 that draws mob spawn/despawn distance rings, spawning chunks and the world-spawn no-spawn zone on Xaero's World Map.*
 
 ## Özellikler
 
@@ -16,10 +16,10 @@ Xaero's World Map üzerinde, oyuncunun etrafındaki mob spawn ve despawn mesafel
 
 ## Gereksinimler
 
-- Minecraft 26.1.2 (26.1.x) veya 26.2, Fabric Loader 0.19+, Java 25
-- Fabric API (26.1.2 için 0.155.3+, 26.2 için 0.161.0+)
+- Minecraft 26.1.2 (26.1.x), 26.2 veya 26.3, Fabric Loader 0.19+, Java 25
+- Fabric API (26.1.2 için 0.155.3+, 26.2 için 0.161.0+, 26.3 için 0.163.0+)
 - Xaero's World Map 1.47.0+
-- Xaero Lib (26.1.2 için 1.7.3+, 26.2 için 1.7.7+; Xaero's World Map'in içinde gelir, ayrıca kurmana gerek yok)
+- Xaero Lib (26.1.2 için 1.7.3+, 26.2 için 1.7.7+, 26.3 için 1.7.17+; Xaero's World Map'in içinde gelir, ayrıca kurmana gerek yok)
 - İsteğe bağlı: Mod Menu
 
 Bunların hepsi `fabric.mod.json` içinde bağımlılık olarak yazılıdır. Biri eksikse veya sürümü eskiyse oyun açılırken Fabric bunu adıyla söyler. Bağımlılık sürümleri derleme sırasında o Minecraft sürümünün `versions/` dosyasından alınır, yani modun derlendiği sürümlerle hep aynıdır.
@@ -33,17 +33,18 @@ set JAVA_HOME=%APPDATA%\PrismLauncher\java\java-runtime-epsilon
 gradlew build
 ```
 
-Bu Minecraft 26.1.2 jar'ını üretir. 26.2 için:
+Bu Minecraft 26.1.2 jar'ını üretir. 26.2 ve 26.3 için:
 
 ```
 gradlew build -Pmc=26.2
+gradlew build -Pmc=26.3
 ```
 
-Hazır jar'lar `build/libs/` klasörüne çıkar (`-sources` olmayan dosya), adında Minecraft sürümü yazar: `spawnradius-<sürüm>+26.1.2.jar` ve `spawnradius-<sürüm>+26.2.jar`. Oyununun sürümüne uyanı kur. Her derleme jar'ı ayrıca ana klasördeki `builds/<minecraft sürümü>/` klasörüne kopyalar ve oradaki eski sürümünü siler; ana klasördeki `build-all.bat` bütün modları her sürüm için tek seferde derler. `gradlew build` ayrıca `src/test` altındaki JUnit testlerini de çalıştırır.
+Hazır jar'lar `build/libs/` klasörüne çıkar (`-sources` olmayan dosya), adında Minecraft sürümü yazar: `spawnradius-<sürüm>+26.1.2.jar`, `spawnradius-<sürüm>+26.2.jar` ve `spawnradius-<sürüm>+26.3.jar`. Oyununun sürümüne uyanı kur. Her derleme jar'ı ayrıca ana klasördeki `builds/<minecraft sürümü>/` klasörüne kopyalar ve oradaki eski sürümünü siler; ana klasördeki `build-all.bat` bütün modları her sürüm için tek seferde derler. `gradlew build` ayrıca `src/test` altındaki JUnit testlerini de çalıştırır.
 
 ### Desteklenen Minecraft sürümleri
 
-Her sürümün bağımlılık sürümleri `versions/<minecraft>.properties` dosyasındadır (Fabric API, Mod Menu, Xaero's World Map, Xaero Lib). Kodun neredeyse tamamı ortaktır; Minecraft sürümleri arasında farklı olan birkaç çağrı (26.2'de ekranların `Minecraft.gui` üzerinden açılması gibi) `src/mc26.1/java` ve `src/mc26.2/java` altındaki `Compat` sınıfındadır. Yeni bir Minecraft sürümü eklemek için oraya bir `versions/` dosyası ve gerekirse bir `Compat` kopyası eklenir.
+Her sürümün bağımlılık sürümleri `versions/<minecraft>.properties` dosyasındadır (Fabric API, Mod Menu, Xaero's World Map, Xaero Lib). Kodun neredeyse tamamı ortaktır; Minecraft sürümleri arasında farklı olan birkaç şey `src/mc26.1/java`, `src/mc26.2/java` ve `src/mc26.3/java` altındadır: `Compat` sınıfı (26.2'den itibaren ekranların `Minecraft.gui` üzerinden açılması gibi) ve `GuiRingBatch` (26.3'te `RenderPipeline` sınıfı `com.mojang.renderpearl` paketine taşındı). Boş tuş atamaları sabit `-1` yerine oyunun `InputConstants.UNKNOWN` değerini kullanır: 26.3'te klavye girişi SDL'e geçti ve "tuş yok" değeri 0 oldu, `-1` gerçek bir tuş sayılıp oyunu çökertiyordu. Yeni bir Minecraft sürümü eklemek için oraya bir `versions/` dosyası ve gerekirse bir `Compat` kopyası eklenir.
 
 Bağımlılıklar şuralardan indirilir:
 - Minecraft, Fabric Loader ve Fabric API: Fabric Maven
@@ -74,7 +75,7 @@ src/main/java/spawnradius/
   mixin/MixinImprovedFramebuffer  harita resmi çizildikten hemen sonra halkaları çizdirir
   mixin/GuiGraphicsExtractorAccessor
   compat/ModMenuIntegration
-src/mc26.1/java, src/mc26.2/java   Minecraft sürümüne göre değişen birkaç çağrı (Compat)
+src/mc26.1/java, src/mc26.2/java, src/mc26.3/java   Minecraft sürümüne göre değişenler (Compat, GuiRingBatch)
 versions/                      her Minecraft sürümü için bağımlılık sürümleri
 src/main/resources/            fabric.mod.json, mixin ayarı, dil dosyaları, ikonlar
 src/test/java/spawnradius/     JUnit testleri (halka mesafeleri, harita hesapları, ayarlar, dil dosyaları)

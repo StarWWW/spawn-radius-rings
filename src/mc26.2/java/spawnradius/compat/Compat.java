@@ -6,8 +6,8 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * The few game calls that differ between the Minecraft versions this mod is built for.
- * This copy is for 26.2 (screens are managed by Minecraft.gui, entity types live in EntityTypes); src/mc26.1 has the
- * same class for 26.1. Everything else is shared.
+ * This copy is for 26.2 (screens are managed by Minecraft.gui, entity types live in EntityTypes); src/mc26.1 and src/mc26.3
+ * have the same class for those versions. Everything else is shared.
  */
 public final class Compat {
     private Compat() {

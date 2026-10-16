@@ -1,10 +1,8 @@
 package spawnradius.client;
 
-import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.gui.render.TextureSetup;
-import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.state.gui.GuiElementRenderState;
 import org.joml.Matrix3x2f;
 import org.joml.Matrix3x2fc;
@@ -17,8 +15,11 @@ import java.util.Arrays;
  * Submitting every ring segment as its own {@code fill} made the game's GUI layering put each overlapping piece
  * on a new layer and search all layers for every new piece, which became very slow when zoomed in (thousands of
  * segments). One element = one layer and one draw call, no matter how many quads it holds.
+ *
+ * The render pipeline comes from {@link GuiRingBatch}, which each Minecraft version has its own copy of
+ * (the RenderPipeline class moved to another package in 26.3).
  */
-final class RingBatch implements GuiElementRenderState {
+abstract class RingBatch implements GuiElementRenderState {
     private final Matrix3x2fc pose;
     private final ScreenRectangle bounds;
     private float[] xy = new float[8 * 256];
@@ -83,11 +84,6 @@ final class RingBatch implements GuiElementRenderState {
             consumer.addVertexWith2DPose(pose, xy[i + 4], xy[i + 5]).setColor(color);
             consumer.addVertexWith2DPose(pose, xy[i + 6], xy[i + 7]).setColor(color);
         }
-    }
-
-    @Override
-    public RenderPipeline pipeline() {
-        return RenderPipelines.GUI;
     }
 
     @Override

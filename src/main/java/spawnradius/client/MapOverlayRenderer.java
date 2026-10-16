@@ -100,7 +100,7 @@ public final class MapOverlayRenderer {
 
         try {
             Matrix3x2f pixelPose = new Matrix3x2f(g.pose()).scale((float) (1.0 / guiScale), (float) (1.0 / guiScale));
-            RingBatch batch = new RingBatch(pixelPose, new ScreenRectangle(0, 0, guiWidth, guiHeight));
+            RingBatch batch = new GuiRingBatch(pixelPose, new ScreenRectangle(0, 0, guiWidth, guiHeight));
             drawGeometry(batch, mc, config, center, mapDimension, view, labels);
             if (!batch.isEmpty()) {
                 ((GuiGraphicsExtractorAccessor) g).spawnradius$guiRenderState().addGuiElement(batch);
